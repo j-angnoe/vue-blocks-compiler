@@ -1,0 +1,24 @@
+{
+  "name": "vue-blocks-compiler",
+  "version": "0.0.1",
+  "description": "Compile vue-blocks files to optimized javascript bundles",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "vuebc": "bin/vuebc"
+  },
+  "author": "Joshua Angnoe",
+  "license": "ISC",
+  "dependencies": {
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babelify": "^7.3.0",
+    "browserify": "^13.3.0",
+    "cheerio": "^0.22.0",
+    "uglifyify": "^3.0.4",
+    "vueify": "^9.4.0",
+    "yargs": "^6.6.0"
+  }
+}
