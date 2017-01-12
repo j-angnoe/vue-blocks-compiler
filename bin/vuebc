@@ -267,7 +267,7 @@ ${outputter.bootstrapApplication}
 
 	outputFiles.push({
 		path: 'index.html',
-		content: $('html').html()
+		content: $.html()
 
 	})
 
