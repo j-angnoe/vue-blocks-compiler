@@ -19,6 +19,10 @@ var path = require('path'); // for path join
 
 var $; // a global which will hold our jquery-able document.
 
+var aliasify = require('aliasify'); // used for template[module] module aliases.
+var moduleAliases = {};
+
+
 
 function removeTabs(string) {
 	var startingSpaces = string.split("\n").map(function countStartingSpacesAndTabs(line) {
@@ -75,6 +79,7 @@ function compileTemplates(input) {
 
 	var outputFiles = [];
 	var components = [];
+
 
 	outputAsJsModule.extension = '.js';
 	outputAsJsModule.bootstrapApplication = `
@@ -186,6 +191,24 @@ new Vue({
 		$(this).remove();
 	})
 
+
+	$('template[module]').each(function () {
+		// extract the primary script (not script[src]) and put it in a separate file.
+		// create an alias, require('thisModule') -> require('./thisModule')
+
+		var moduleName = $(this).attr('module');
+		var moduleContent = $('script:not([src])', this).remove().html()
+
+
+		moduleAliases[moduleName] = './' + moduleName + '.js';
+
+		outputFiles.push({
+			path: moduleName + '.js',
+			content: moduleContent
+		})
+
+	})
+
 	// create router file:
 	outputFiles.push({
 		path: 'routes.js',
@@ -247,6 +270,9 @@ ${outputter.bootstrapApplication}
 		content: $('html').html()
 
 	})
+
+	console.log($)
+
 
 
 
@@ -336,9 +362,21 @@ function main() {
 					basedir: OUTPUT_DIRECTORY
 				})
 
+				console.log(moduleAliases);
+
+				
 				if (VUEIFY) {
 					bundle = bundle.transform(vueify)
 				}
+
+				bundle = bundle.transform(aliasify, {
+					aliases: moduleAliases,
+					appliesTo: {
+       					 "includeExtensions": ['.js', '.vue']
+      				},
+      				configDir: OUTPUT_DIRECTORY
+				})
+
 				/*
 				if (MINIFY) {
 					bundle = bundle.transform({global:true}, uglifyify)
